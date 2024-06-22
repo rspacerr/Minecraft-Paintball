@@ -7,15 +7,18 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import java.util.Map;
 import java.util.UUID;
 
 public final class Paintball extends JavaPlugin implements Listener {
     private Map<UUID, PaintballPlayer> players;
+    private static int damage = 2;
 
     @Override
     public void onEnable() {
@@ -38,6 +41,28 @@ public final class Paintball extends JavaPlugin implements Listener {
             Snowball proj = player.launchProjectile(Snowball.class);
             proj.setVelocity(proj.getVelocity().multiply(1.25));
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 2);
+        }
+    }
+
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent e) {
+        if (!(e.getEntity() instanceof Snowball)) return;
+
+        if (e.getHitEntity() == null) return;
+        if ( !(e.getHitEntity() instanceof Player) ) return;
+
+        Player hitPlayer = (Player) e.getHitEntity();
+        Player shooter = (Player) e.getEntity().getShooter();
+        Vector paintballVelocity = e.getEntity().getVelocity();
+
+        shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 5);
+        if (hitPlayer.getHealth() - damage <= 0) {
+            hitPlayer.setGameMode(GameMode.ADVENTURE);
+            hitPlayer.setHealth(20);
+            // TODO: broadcast death message
+        } else {
+            hitPlayer.damage(damage);
+            hitPlayer.setVelocity(new Vector(paintballVelocity.getX()*0.1, 0.5, paintballVelocity.getZ()*0.1));
         }
     }
 
