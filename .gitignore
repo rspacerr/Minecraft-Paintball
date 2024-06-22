@@ -6,6 +6,9 @@
 # IntelliJ
 .idea/
 
+# build
+build/
+
 # Gradle Related
 gradle/
 .gradle/
