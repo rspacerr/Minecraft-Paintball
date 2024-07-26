@@ -2,3 +2,10 @@ name: Paintball
 version: '${version}'
 main: me.rspacerr.paintball.Paintball
 api-version: '1.20'
+author: [ rspacerr ]
+commands:
+  changeteam:
+    description: change the user's team.
+  setdamage:
+    description: change the damage level.
+

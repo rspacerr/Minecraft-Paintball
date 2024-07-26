@@ -1,6 +1,7 @@
 package me.rspacerr.paintball;
 
 import me.rspacerr.paintball.commands.changeteam;
+import me.rspacerr.paintball.commands.setdamage;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 public final class Paintball extends JavaPlugin implements Listener {
     private Map<UUID, PaintballPlayer> players;
-    private static int damage = 2;
+    public static double damage = 2;
 
     @Override
     public void onEnable() {
@@ -57,7 +58,7 @@ public final class Paintball extends JavaPlugin implements Listener {
 
         shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 5);
         if (hitPlayer.getHealth() - damage <= 0) {
-            hitPlayer.setGameMode(GameMode.ADVENTURE);
+            hitPlayer.setGameMode(GameMode.SPECTATOR);
             hitPlayer.setHealth(20);
             // TODO: broadcast death message
         } else {
@@ -78,8 +79,11 @@ public final class Paintball extends JavaPlugin implements Listener {
 
     private void setupCommands() {
         getCommand("changeteam").setExecutor(new changeteam());
+        getCommand("setdamage").setExecutor(new setdamage());
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        Bukkit.broadcastMessage(ChatColor.RED + "Paintball plugin disabled!");
+    }
 }
