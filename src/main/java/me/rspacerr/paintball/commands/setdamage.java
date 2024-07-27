@@ -1,6 +1,6 @@
 package me.rspacerr.paintball.commands;
 
-import me.rspacerr.paintball.Paintball;
+import me.rspacerr.paintball.games.Paintball;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

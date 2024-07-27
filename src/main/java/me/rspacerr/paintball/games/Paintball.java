@@ -1,34 +1,28 @@
-package me.rspacerr.paintball;
+package me.rspacerr.paintball.games;
 
-import me.rspacerr.paintball.commands.changeteam;
-import me.rspacerr.paintball.commands.setdamage;
-import org.bukkit.*;
+import me.rspacerr.paintball.PaintballPlayer;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import java.util.Map;
 import java.util.UUID;
 
-public final class Paintball extends JavaPlugin implements Listener {
+public class Paintball {
+    // gameplay
     private Map<UUID, PaintballPlayer> players;
+
+    // variables
     public static double damage = 2;
 
-    @Override
-    public void onEnable() {
-        // Plugin startup logic
-        getServer().getPluginManager().registerEvents(this, this);
-        setupCommands();
-
-        Bukkit.broadcastMessage(ChatColor.GREEN + "Paintball Plugin loaded!");
-    }
 
     @EventHandler
     public void onShoot(PlayerInteractEvent e) {
@@ -73,17 +67,6 @@ public final class Paintball extends JavaPlugin implements Listener {
 
         if (players.containsKey(id)) {
             players.remove(id);
-            // TODO: Game Logic, i.e. remove from team
         }
-    }
-
-    private void setupCommands() {
-        getCommand("changeteam").setExecutor(new changeteam());
-        getCommand("setdamage").setExecutor(new setdamage());
-    }
-
-    @Override
-    public void onDisable() {
-        Bukkit.broadcastMessage(ChatColor.RED + "Paintball plugin disabled!");
     }
 }
