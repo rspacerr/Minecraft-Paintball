@@ -1,30 +1,27 @@
-package me.rspacerr.paintball;
+package me.rspacerr.paintball.players;
 
-import org.bukkit.Bukkit;
+import me.rspacerr.paintball.PaintballPlugin;
+import me.rspacerr.paintball.GameTeam;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-/**
- * Player class. Represents a player who is playing in a paintball game.
- */
-public class PaintballPlayer {
+public class GamePlayer {
     private Player player;
-    private long cooldown = 0;
     private int kills = 0;
 
     private Scoreboard board = PaintballPlugin.manager.getNewScoreboard();
-    private PaintballTeam paintballTeam = null;
+    private GameTeam team = null;
     private Team scoreboardTeam = null;
 
-    public PaintballPlayer(Player p) {
-       this.player = p;
+    public GamePlayer(Player p) {
+        this.player = p;
     }
 
     public void changeTeam(String s) {
         // if already on a team, remove them from their previous team
-        if (paintballTeam != null) {
-            paintballTeam.removePlayer(this);
+        if (team != null) {
+            team.removePlayer(this);
         }
 
         // add player to scoreboard team
@@ -33,8 +30,8 @@ public class PaintballPlayer {
             scoreboardTeam.setAllowFriendlyFire(false);
             scoreboardTeam.setPrefix("[" + s + "]");
 
-            paintballTeam = new PaintballTeam(s);
-            paintballTeam.addPlayer(this);
+            team = new GameTeam(s);
+            team.addPlayer(this);
         }
         scoreboardTeam.addPlayer(player);
 
@@ -42,12 +39,11 @@ public class PaintballPlayer {
     }
 
     /*
-    public static PaintballPlayer getPaintballPlayer(Player p) {
-        // TODO
+    public static GamePlayer getGamePlayer() {
+
     }
      */
 
-    public long cooldown() { return cooldown; }
     public Player player() { return player; }
     public int kills() { return kills; }
     public void incrementKills() { ++kills; }

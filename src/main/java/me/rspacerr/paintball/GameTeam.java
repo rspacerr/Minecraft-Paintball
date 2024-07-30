@@ -1,26 +1,28 @@
 package me.rspacerr.paintball;
 
+import me.rspacerr.paintball.players.GamePlayer;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-public class PaintballTeam {
-    private Set<PaintballPlayer> players;
+public class GameTeam {
+    private Set<GamePlayer> players;
     private String name;
 
-    public PaintballTeam(String name) {
+    public GameTeam(String name) {
         this.name = name;
     }
 
-    public void addPlayer(PaintballPlayer p) {
+    public void addPlayer(GamePlayer p) {
         players.add(p);
     }
 
-    public void removePlayer(PaintballPlayer p) {
+    public void removePlayer(GamePlayer p) {
         players.remove(p);
     }
 
-    public Collection<PaintballPlayer> players() {
+    public Collection<GamePlayer> players() {
         return Collections.unmodifiableCollection(players);
     }
 

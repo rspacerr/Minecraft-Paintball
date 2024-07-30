@@ -1,6 +1,6 @@
 package me.rspacerr.paintball.games;
 
-import me.rspacerr.paintball.PaintballPlayer;
+import me.rspacerr.paintball.players.PaintballPlayer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
