@@ -13,13 +13,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.util.Vector;
 
-import java.util.Map;
 import java.util.UUID;
 
-public class Paintball {
-    // gameplay
-    private Map<UUID, PaintballPlayer> players;
-
+public class Paintball extends Game {
     // variables
     public static double damage = 2;
 
@@ -64,9 +60,15 @@ public class Paintball {
     @EventHandler
     public void onDisconnect(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
+    }
 
-        if (players.containsKey(id)) {
-            players.remove(id);
-        }
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void end() {
+
     }
 }

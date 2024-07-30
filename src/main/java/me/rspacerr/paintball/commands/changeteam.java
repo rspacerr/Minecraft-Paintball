@@ -1,5 +1,7 @@
 package me.rspacerr.paintball.commands;
 
+import me.rspacerr.paintball.GameManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,17 +16,27 @@ public class changeteam implements CommandExecutor {
             return false;
         }
 
-        if (args.length > 3) {
-            sender.sendMessage(ChatColor.RED + "Usage: /changeteam Player RED/BLUE");
+        if (args.length != 3 && args.length != 2) {
+            sender.sendMessage(ChatColor.RED + "Usage: /changeteam <name> <player>");
             return false;
         }
 
-        if ( !(args[2].equalsIgnoreCase("RED") || args[2].equalsIgnoreCase("BLUE")) ) {
-            sender.sendMessage(ChatColor.RED + "We currently do not support this team. Use team RED or BLUE");
-            return false;
+        String name = args[1];
+        if (args.length == 3) {
+            // don't add if player is not online
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (p.getName().equals(args[2])) {
+                    GameManager.changeTeam(name, p);
+                    sender.sendMessage(String.format("%sSuccessfully changed %s's team to %s.", ChatColor.GREEN, p.name(), name));
+                    break;
+                }
+            }
+        } else {
+            Player p = (Player) sender;
+            GameManager.changeTeam(name, p);
+            sender.sendMessage(String.format("%sSuccessfully changed %s's team to %s.", ChatColor.GREEN, p.name(), name));
         }
 
-        // TODO: add player to team
         return true;
     }
 }

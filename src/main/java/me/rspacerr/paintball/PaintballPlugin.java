@@ -4,7 +4,9 @@ import me.rspacerr.paintball.commands.changeteam;
 import me.rspacerr.paintball.commands.setdamage;
 import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.*;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.ScoreboardManager;
 
@@ -28,6 +30,11 @@ public final class PaintballPlugin extends JavaPlugin implements Listener {
     private void setupCommands() {
         getCommand("changeteam").setExecutor(new changeteam());
         getCommand("setdamage").setExecutor(new setdamage());
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e) {
+        GameManager.removePlayer(e.getPlayer());
     }
 
     @Override
