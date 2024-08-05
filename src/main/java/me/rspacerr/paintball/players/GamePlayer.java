@@ -1,6 +1,5 @@
 package me.rspacerr.paintball.players;
 
-import me.rspacerr.paintball.GameManager;
 import me.rspacerr.paintball.PaintballPlugin;
 import me.rspacerr.paintball.GameTeam;
 import org.bukkit.entity.Player;
@@ -37,13 +36,8 @@ public class GamePlayer {
         scoreboardTeam.addPlayer(player);
 
         // TODO: add team to all other player's scoreboards
-    }
-
-    /*
-    public static GamePlayer getGamePlayer() {
 
     }
-     */
 
     public Player player() { return player; }
     public int kills() { return kills; }
