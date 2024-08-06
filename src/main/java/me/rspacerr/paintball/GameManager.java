@@ -3,12 +3,14 @@ package me.rspacerr.paintball;
 import me.rspacerr.paintball.games.Game;
 import me.rspacerr.paintball.games.GameType;
 import me.rspacerr.paintball.games.Paintball;
+import me.rspacerr.paintball.games.Quickfire;
 import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 
 public final class GameManager {
+    // Functionality
     private static Map<UUID, GamePlayer> players = new HashMap<>();
     private static Map<String, GameTeam> teams = new HashMap<>();
     private static GameType type = GameType.PAINTBALL;
@@ -20,6 +22,9 @@ public final class GameManager {
         switch (type) {
             case PAINTBALL:
                 game = new Paintball();
+                break;
+            case QUICKFIRE:
+                game = new Quickfire();
                 break;
             default:
                 return false;

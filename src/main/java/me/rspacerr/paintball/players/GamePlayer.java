@@ -42,4 +42,5 @@ public class GamePlayer {
     public Player player() { return player; }
     public int kills() { return kills; }
     public void incrementKills() { ++kills; }
+    public String team() { return team.name(); }
 }

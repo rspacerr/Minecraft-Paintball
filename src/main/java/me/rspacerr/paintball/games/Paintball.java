@@ -1,13 +1,11 @@
 package me.rspacerr.paintball.games;
 
 import me.rspacerr.paintball.GameManager;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
+import me.rspacerr.paintball.GameUtil;
+import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
@@ -23,6 +21,10 @@ public class Paintball extends Game {
     // variables
     public static double damage = 2;
 
+    @Override
+    public void start() {
+
+    }
 
     @EventHandler
     public void onShoot(PlayerInteractEvent e) {
@@ -42,30 +44,20 @@ public class Paintball extends Game {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent e) {
         if (e.getHitEntity() == null) return;
+        if (!(e.getEntity() instanceof Snowball)) return;
         if (!(e.getHitEntity() instanceof Player hitPlayer)) return;
         if (!(e.getEntity().getShooter() instanceof Player shooter)) return;
 
-        Projectile proj = e.getEntity();
+        // Check if same team
+        GamePlayer hitGamePlayer = GameManager.getPlayer(hitPlayer);
+        GamePlayer shooterGamePlayer = GameManager.getPlayer(shooter);
+        if (hitGamePlayer.team().equals(shooterGamePlayer.team())) return;
 
-        if (e.getEntity() instanceof Snowball) {
-            paintballHit(hitPlayer, shooter, proj);
-            return;
-        }
+        Projectile projectile = e.getEntity();
 
-        // TODO: add freezing for melt mode
-        if (e.getEntity() instanceof Arrow) {
-            // TODO: check GAME_TYPE
-
-            quickfireHit(hitPlayer, shooter, proj);
-            return;
-        }
-
-    }
-
-    private void paintballHit(Player hitPlayer, Player shooter, Projectile projectile) {
         Vector paintballVelocity = projectile.getVelocity();
 
-        shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 5);
+        GameUtil.hitSFX(shooter);
         if (hitPlayer.getHealth() - damage <= 0) {
             hitPlayer.setGameMode(GameMode.SPECTATOR);
             hitPlayer.setHealth(20);
@@ -77,29 +69,13 @@ public class Paintball extends Game {
         projectile.remove();
     }
 
-    private void quickfireHit(Player hitPlayer, Player shooter, Projectile projectile) {
-        shooter.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(hitPlayer.getName() + " - " + ChatColor.RED + ((int)(hitPlayer.getHealth()-2))/2+ " ♥"));
-        shooter.playSound(shooter, Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
-
-        if (hitPlayer.getHealth() <= 2) {
-            // TODO: better death?
-            hitPlayer.setGameMode(GameMode.SPECTATOR);
-        } else {
-            hitPlayer.damage(damage);
-            hitPlayer.setVelocity(new Vector(projectile.getVelocity().getX()*0.15, 0.3, projectile.getVelocity().getZ()*0.15));
-        }
-        projectile.remove();
-    }
-
-
-
     @EventHandler
     public void onDisconnect(PlayerQuitEvent e) {
         GameManager.removePlayer(e.getPlayer());
     }
 
     @Override
-    public void start() {
+    public void death(GamePlayer player) {
 
     }
 
