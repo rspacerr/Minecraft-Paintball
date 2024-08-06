@@ -1,15 +1,33 @@
 package me.rspacerr.paintball;
 
+import me.rspacerr.paintball.games.Game;
+import me.rspacerr.paintball.games.GameType;
+import me.rspacerr.paintball.games.Paintball;
 import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class GameManager {
+public final class GameManager {
     private static Map<UUID, GamePlayer> players = new HashMap<>();
     private static Map<String, GameTeam> teams = new HashMap<>();
+    private static GameType type = GameType.PAINTBALL;
+    private static Game game = null;
 
     private GameManager() {}
+
+    public static boolean startGame() {
+        switch (type) {
+            case PAINTBALL:
+                game = new Paintball();
+                break;
+            default:
+                return false;
+        };
+        game.start();
+        return true;
+    }
+
 
     /**
      * Returns the GamePlayer associated with the given player.
@@ -20,6 +38,11 @@ public class GameManager {
         return players.get(player.getUniqueId());
     }
 
+    /**
+     * Creates a new GamePlayer representation of player and adds them to the game roster
+     * @param player adds player to game roster
+     * @return GamePlayer representation of the added player
+     */
     public static GamePlayer addPlayer(Player player) {
         GamePlayer newPlayer = new GamePlayer(player);
         players.put(player.getUniqueId(), new GamePlayer(player));
@@ -64,5 +87,9 @@ public class GameManager {
     /* For iterating through all teams */
     public static Collection<GameTeam> teams() {
         return Collections.unmodifiableCollection(teams.values());
+    }
+
+    public static void setGameType(GameType type) {
+        GameManager.type = type;
     }
 }

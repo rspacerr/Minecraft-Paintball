@@ -1,7 +1,6 @@
 package me.rspacerr.paintball.games;
 
 import me.rspacerr.paintball.GameManager;
-import me.rspacerr.paintball.players.PaintballPlayer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -19,7 +18,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.util.Vector;
 
-import java.util.UUID;
 
 public class Paintball extends Game {
     // variables
@@ -87,7 +85,7 @@ public class Paintball extends Game {
             // TODO: better death?
             hitPlayer.setGameMode(GameMode.SPECTATOR);
         } else {
-            hitPlayer.damage(2);
+            hitPlayer.damage(damage);
             hitPlayer.setVelocity(new Vector(projectile.getVelocity().getX()*0.15, 0.3, projectile.getVelocity().getZ()*0.15));
         }
         projectile.remove();

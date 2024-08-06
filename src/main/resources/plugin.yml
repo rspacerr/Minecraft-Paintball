@@ -1,6 +1,6 @@
 name: Paintball
 version: '${version}'
-main: me.rspacerr.paintball.games.Paintball
+main: me.rspacerr.paintball.PaintballPlugin
 api-version: '1.20'
 author: [ rspacerr ]
 commands:
@@ -8,4 +8,3 @@ commands:
     description: change the user's team.
   setdamage:
     description: change the damage level.
-
