@@ -1,5 +1,6 @@
 package me.rspacerr.paintball.players;
 
+import me.rspacerr.paintball.GameManager;
 import me.rspacerr.paintball.PaintballPlugin;
 import me.rspacerr.paintball.GameTeam;
 import org.bukkit.entity.Player;
@@ -32,11 +33,32 @@ public class GamePlayer {
 
             team = new GameTeam(s);
             team.addPlayer(this);
+            scoreboardTeam.addPlayer(player);
+        } else {
+            board.getTeam(s).addPlayer(player);
         }
-        scoreboardTeam.addPlayer(player);
 
-        // TODO: add team to all other player's scoreboards
+        for (GamePlayer player : GameManager.players()) {
+            // add everyone to this player's scoreboard
+            if (board.getTeam(player.team()) == null) {
+                Team scoreboardTeam = player.board.registerNewTeam(player.team());
+                scoreboardTeam.setPrefix("[" + player.team() + "]");
+                scoreboardTeam.setAllowFriendlyFire(false);
+                scoreboardTeam.addPlayer(player.player);
+            } else {
+                board.getTeam(player.team()).addPlayer(player.player);
+            }
 
+            // add this player to everyone else's scoreboard
+            if (player.board.getTeam(s) == null) {
+                Team scoreboardTeam = player.board.registerNewTeam(s);
+                scoreboardTeam.setAllowFriendlyFire(false);
+                scoreboardTeam.setPrefix("[" + s + "]");
+                scoreboardTeam.addPlayer(this.player);
+            } else {
+                player.board.getTeam(s).addPlayer(this.player);
+            }
+        }
     }
 
     public Player player() { return player; }
