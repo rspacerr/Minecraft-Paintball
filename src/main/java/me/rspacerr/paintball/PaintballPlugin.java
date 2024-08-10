@@ -2,6 +2,7 @@ package me.rspacerr.paintball;
 
 import me.rspacerr.paintball.commands.changeteam;
 import me.rspacerr.paintball.commands.setdamage;
+import me.rspacerr.paintball.commands.type;
 import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.*;
 import org.bukkit.event.EventHandler;
@@ -30,6 +31,10 @@ public final class PaintballPlugin extends JavaPlugin implements Listener {
     private void setupCommands() {
         getCommand("changeteam").setExecutor(new changeteam());
         getCommand("setdamage").setExecutor(new setdamage());
+
+        type typeCommand = new type();
+        getCommand("type").setExecutor(typeCommand);
+        getCommand("type").setTabCompleter(typeCommand);
     }
 
     @EventHandler

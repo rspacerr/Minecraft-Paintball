@@ -1,9 +1,6 @@
 package me.rspacerr.paintball;
 
-import me.rspacerr.paintball.games.Game;
-import me.rspacerr.paintball.games.GameType;
-import me.rspacerr.paintball.games.Paintball;
-import me.rspacerr.paintball.games.Quickfire;
+import me.rspacerr.paintball.games.*;
 import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.entity.Player;
 
@@ -16,6 +13,9 @@ public final class GameManager {
     private static GameType type = GameType.PAINTBALL;
     private static Game game = null;
 
+    // settings
+    public static boolean ALLOW_PUNCHING = false;
+
     private GameManager() {}
 
     public static boolean startGame() {
@@ -25,6 +25,9 @@ public final class GameManager {
                 break;
             case QUICKFIRE:
                 game = new Quickfire();
+                break;
+            case FROSTBITE:
+                game = new Frostbite();
                 break;
             default:
                 return false;
@@ -83,7 +86,6 @@ public final class GameManager {
         teams.put(name, new GameTeam(name));
     }
 
-
     /* For iterating through all players */
     public static Collection<GamePlayer> players() {
         return Collections.unmodifiableCollection(players.values());
@@ -92,6 +94,11 @@ public final class GameManager {
     /* For iterating through all teams */
     public static Collection<GameTeam> teams() {
         return Collections.unmodifiableCollection(teams.values());
+    }
+
+    /* determine if a game is currently happening */
+    public static boolean isActive() {
+        return game != null;
     }
 
     public static void setGameType(GameType type) {

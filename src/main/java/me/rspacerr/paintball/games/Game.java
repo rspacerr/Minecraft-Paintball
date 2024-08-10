@@ -2,7 +2,10 @@ package me.rspacerr.paintball.games;
 
 import me.rspacerr.paintball.GameTeam;
 import me.rspacerr.paintball.players.GamePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.List;
 
@@ -20,6 +23,17 @@ public abstract class Game implements Listener {
      * @param player Player that died.
      */
     public abstract void death(GamePlayer player);
+
+
+    /* prevent punching */
+    @EventHandler
+    public void onPunch(EntityDamageByEntityEvent e) {
+        if (! (e.getEntity() instanceof Player && e.getDamager() instanceof Player)) return;
+
+        if ()
+
+
+    }
 
     /**
      * Trigger end game events if there is only one team alive.
