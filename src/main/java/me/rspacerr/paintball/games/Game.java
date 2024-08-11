@@ -1,5 +1,6 @@
 package me.rspacerr.paintball.games;
 
+import me.rspacerr.paintball.GameManager;
 import me.rspacerr.paintball.GameTeam;
 import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.entity.Player;
@@ -30,9 +31,9 @@ public abstract class Game implements Listener {
     public void onPunch(EntityDamageByEntityEvent e) {
         if (! (e.getEntity() instanceof Player && e.getDamager() instanceof Player)) return;
 
-        if ()
-
-
+        if ( !GameManager.ALLOW_PUNCHING ) {
+            e.setCancelled(true);
+        }
     }
 
     /**

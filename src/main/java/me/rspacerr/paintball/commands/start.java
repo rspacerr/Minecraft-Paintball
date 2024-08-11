@@ -19,11 +19,11 @@ public class start implements CommandExecutor {
         }
 
         if (GameManager.teams().size() < 2) {
-            Bukkit.broadcastMessage(ChatColor.RED + "Failed to start game!");
+            Bukkit.broadcastMessage(ChatColor.RED + "Failed to start game! Please make sure there are at least two participating teams!");
             for (GameTeam gt : GameManager.teams()) {
                 Bukkit.broadcastMessage("Team " + gt.name() + " has members: ");
                 for (GamePlayer pl : gt.players()) {
-                    Bukkit.broadcastMessage(pl.player().toString());
+                    Bukkit.broadcastMessage(pl.player().getName());
                 }
             }
             return false;

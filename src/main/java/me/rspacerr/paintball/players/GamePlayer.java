@@ -7,11 +7,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.util.Collection;
+
 public class GamePlayer {
     private Player player;
     private int kills = 0;
 
-    private Scoreboard board = PaintballPlugin.manager.getNewScoreboard();
+    private final Scoreboard board = PaintballPlugin.manager.getNewScoreboard();
     private GameTeam team = null;
     private Team scoreboardTeam = null;
 
@@ -65,4 +67,5 @@ public class GamePlayer {
     public int kills() { return kills; }
     public void incrementKills() { ++kills; }
     public String team() { return team.name(); }
+    public Collection<GamePlayer> teammates() { return team.players(); }
 }

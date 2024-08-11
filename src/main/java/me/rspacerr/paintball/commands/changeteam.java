@@ -21,20 +21,20 @@ public class changeteam implements CommandExecutor {
             return false;
         }
 
-        String name = args[1];
+        String name = args[0];
         if (args.length == 3) {
             // don't add if player is not online
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.getName().equals(args[2])) {
                     GameManager.changeTeam(name, p);
-                    sender.sendMessage(String.format("%sSuccessfully changed %s's team to %s.", ChatColor.GREEN, p.name(), name));
+                    sender.sendMessage(String.format("%sSuccessfully changed %s's team to %s.", ChatColor.GREEN, p.getName(), name));
                     break;
                 }
             }
         } else {
             Player p = (Player) sender;
             GameManager.changeTeam(name, p);
-            sender.sendMessage(String.format("%sSuccessfully changed %s's team to %s.", ChatColor.GREEN, p.name(), name));
+            sender.sendMessage(String.format("%sSuccessfully changed %s's team to %s.", ChatColor.GREEN, p.getName(), name));
         }
 
         return true;

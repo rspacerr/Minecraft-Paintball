@@ -2,12 +2,12 @@ package me.rspacerr.paintball;
 
 import me.rspacerr.paintball.commands.changeteam;
 import me.rspacerr.paintball.commands.setdamage;
+import me.rspacerr.paintball.commands.start;
 import me.rspacerr.paintball.commands.type;
 import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.*;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.ScoreboardManager;
 
@@ -15,6 +15,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class PaintballPlugin extends JavaPlugin implements Listener {
+    // plugin instance
+    private static Plugin plugin;
+
     // managers
     public static ScoreboardManager manager = Bukkit.getScoreboardManager();
     public static Set<GamePlayer> players = new HashSet<>();
@@ -23,27 +26,24 @@ public final class PaintballPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         // Plugin startup logic
         getServer().getPluginManager().registerEvents(this, this);
-        setupCommands();
-
-        Bukkit.broadcastMessage(ChatColor.GREEN + "Paintball Plugin loaded!");
-    }
-
-    private void setupCommands() {
         getCommand("changeteam").setExecutor(new changeteam());
         getCommand("setdamage").setExecutor(new setdamage());
 
         type typeCommand = new type();
         getCommand("type").setExecutor(typeCommand);
         getCommand("type").setTabCompleter(typeCommand);
-    }
 
-    @EventHandler
-    public void onLeave(PlayerQuitEvent e) {
-        GameManager.removePlayer(e.getPlayer());
+        getCommand("start").setExecutor(new start());
+
+        plugin = this;
+
+        Bukkit.broadcastMessage(ChatColor.GREEN + "Paintball Plugin loaded!");
     }
 
     @Override
     public void onDisable() {
         Bukkit.broadcastMessage(ChatColor.RED + "Paintball plugin disabled!");
     }
+
+    public static Plugin plugin() { return plugin; }
 }

@@ -69,11 +69,6 @@ public class Paintball extends Game {
         projectile.remove();
     }
 
-    @EventHandler
-    public void onDisconnect(PlayerQuitEvent e) {
-        GameManager.removePlayer(e.getPlayer());
-    }
-
     @Override
     public void death(GamePlayer player) {
 
@@ -81,6 +76,14 @@ public class Paintball extends Game {
 
     @Override
     public void end() {
+
+    }
+
+    /* as default behavior, remove players that disconnect. TODO: check for team death */
+    @EventHandler
+    public void onDisconnect(PlayerQuitEvent e) {
+        GameManager.removePlayer(e.getPlayer());
+
 
     }
 }

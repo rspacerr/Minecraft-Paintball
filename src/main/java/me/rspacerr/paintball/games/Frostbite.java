@@ -52,6 +52,9 @@ public class Frostbite extends Game {
 
         hitPlayer.getInventory().setHelmet(ICE);
         frozenPlayers.add(hitGamePlayer);
+
+        // check if full team is frozen
+
     }
 
     @Override

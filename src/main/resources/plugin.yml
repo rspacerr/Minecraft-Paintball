@@ -4,6 +4,10 @@ main: me.rspacerr.paintball.PaintballPlugin
 api-version: '1.20'
 author: [ rspacerr ]
 commands:
+  start:
+    description: starts the game.
+  type:
+    description: change the game type.
   changeteam:
     description: change the user's team.
   setdamage:

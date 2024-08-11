@@ -23,11 +23,15 @@ public class type implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        if (args.length != 2) {
-            sender.sendMessage(ChatColor.RED + "Usage: /type <type>");
+        if (args.length != 1 && args.length != 2) {
+            sender.sendMessage("Usage: /type <type>");
             return false;
         }
 
+        if (args.length == 1) {
+            sender.sendMessage("Current gamemode: " + GameManager.game());
+            return true;
+        }
 
         String mode = args[1].toLowerCase();
         switch (mode) {
@@ -43,8 +47,8 @@ public class type implements CommandExecutor, TabCompleter {
             default:
                 sender.sendMessage(ChatColor.RED + "Invalid type specified!");
                 return false;
-        }
 
+        }
         sender.sendMessage(ChatColor.GREEN + "Successfully updated game type!");
         return true;
     }
