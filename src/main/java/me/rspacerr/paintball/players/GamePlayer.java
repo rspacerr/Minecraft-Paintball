@@ -33,7 +33,11 @@ public class GamePlayer {
             scoreboardTeam.setAllowFriendlyFire(false);
             scoreboardTeam.setPrefix("[" + s + "]");
 
-            team = new GameTeam(s);
+            // TODO: this should not make a new team, but sh
+            if (GameManager.getTeam(s) == null) {
+                GameManager.addTeam(s);
+            }
+            team = GameManager.getTeam(s);
             team.addPlayer(this);
             scoreboardTeam.addPlayer(player);
         } else {
@@ -43,7 +47,7 @@ public class GamePlayer {
         for (GamePlayer player : GameManager.players()) {
             // add everyone to this player's scoreboard
             if (board.getTeam(player.team()) == null) {
-                Team scoreboardTeam = player.board.registerNewTeam(player.team());
+                Team scoreboardTeam = board.registerNewTeam(player.team());
                 scoreboardTeam.setPrefix("[" + player.team() + "]");
                 scoreboardTeam.setAllowFriendlyFire(false);
                 scoreboardTeam.addPlayer(player.player);
@@ -68,4 +72,9 @@ public class GamePlayer {
     public void incrementKills() { ++kills; }
     public String team() { return team.name(); }
     public Collection<GamePlayer> teammates() { return team.players(); }
+
+    @Override
+    public int hashCode() {
+        return player.hashCode();
+    }
 }

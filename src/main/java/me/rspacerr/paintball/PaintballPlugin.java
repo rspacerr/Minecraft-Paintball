@@ -43,6 +43,10 @@ public final class PaintballPlugin extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         Bukkit.broadcastMessage(ChatColor.RED + "Paintball plugin disabled!");
+
+        if (GameManager.isActive()) {
+            GameManager.end();
+        }
     }
 
     public static Plugin plugin() { return plugin; }

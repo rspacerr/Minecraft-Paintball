@@ -2,7 +2,9 @@ package me.rspacerr.paintball.games;
 
 import me.rspacerr.paintball.GameManager;
 import me.rspacerr.paintball.GameUtil;
+import me.rspacerr.paintball.PaintballPlugin;
 import me.rspacerr.paintball.players.GamePlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -16,14 +18,40 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.util.Vector;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
+
 
 public class Paintball extends Game {
     // variables
     public static double damage = 2;
+    public static final long COOLDOWN_TIME = 1000; // 1 second
+    Map<UUID, Long> cooldowns = new HashMap<>();
+    Map<UUID, Boolean> canShoot = new HashMap<>();
+
+    int cooldownTaskID = -1;
 
     @Override
     public void start() {
+        for (GamePlayer pl : GameManager.players()) {
+            cooldowns.put(pl.player().getUniqueId(), System.currentTimeMillis());
+            canShoot.put(pl.player().getUniqueId(), true);
+        }
 
+        cooldownTaskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PaintballPlugin.plugin(), () -> {
+            Iterator<Map.Entry<UUID, Long>> iterator = cooldowns.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<UUID, Long> entry = iterator.next();
+                long storedTime = entry.getValue();
+
+                if (System.currentTimeMillis() - storedTime >= COOLDOWN_TIME) {
+                    canShoot.put(entry.getKey(), true);
+                    iterator.remove();
+                }
+            }
+        }, 20, 1);
     }
 
     @EventHandler
@@ -35,9 +63,15 @@ public class Paintball extends Game {
 
         /* shoot paintballs */
         if (player.getInventory().getItemInMainHand().getType() == Material.DIAMOND_HORSE_ARMOR) {
-            Snowball proj = player.launchProjectile(Snowball.class);
-            proj.setVelocity(proj.getVelocity().multiply(1.25));
-            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 2);
+
+            if (canShoot.containsKey(player.getUniqueId()) && canShoot.get(player.getUniqueId())) {
+                Snowball proj = player.launchProjectile(Snowball.class);
+                proj.setVelocity(proj.getVelocity().multiply(1.25));
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 2);
+
+                canShoot.put(player.getUniqueId(), false);
+                cooldowns.put(player.getUniqueId(), System.currentTimeMillis());
+            }
         }
     }
 
@@ -76,14 +110,12 @@ public class Paintball extends Game {
 
     @Override
     public void end() {
-
+        Bukkit.getScheduler().cancelTask(cooldownTaskID);
     }
 
     /* as default behavior, remove players that disconnect. TODO: check for team death */
     @EventHandler
     public void onDisconnect(PlayerQuitEvent e) {
         GameManager.removePlayer(e.getPlayer());
-
-
     }
 }

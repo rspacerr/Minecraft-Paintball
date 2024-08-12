@@ -93,6 +93,15 @@ public final class GameManager {
     }
 
     /**
+     * Returns team associated with given name
+     * @param name Name of the team
+     * @return the team assigned the name.
+     */
+    public static GameTeam getTeam(String name) {
+        return teams.get(name);
+    }
+
+    /**
      * Returns true if player's team is entirely dead.
      * @param player GamePlayer that has just died
      * @return true if the entire team is dead, false otherwise
@@ -120,14 +129,17 @@ public final class GameManager {
         return game != null;
     }
 
+    /* get type of game; prevent rep exposure by returning game */
     public static GameType game() {
         return type;
+    }
+
+    /* end game on shutdown or other critical failure */
+    public static void end() {
+        game.end();
     }
 
     public static void setGameType(GameType type) {
         GameManager.type = type;
     }
-
-
-    // big chungus
 }
