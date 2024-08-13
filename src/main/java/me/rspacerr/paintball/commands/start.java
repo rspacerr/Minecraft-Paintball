@@ -29,6 +29,14 @@ public class start implements CommandExecutor {
             return false;
         }
 
+        // DEBUG
+        for (GameTeam gt : GameManager.teams()) {
+            Bukkit.broadcastMessage("Team " + gt.name() + " has members: ");
+            for (GamePlayer pl : gt.players()) {
+                Bukkit.broadcastMessage(pl.player().getName());
+            }
+        }
+
         return GameManager.startGame();
     }
 }

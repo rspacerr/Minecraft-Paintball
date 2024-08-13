@@ -6,6 +6,8 @@ author: [ rspacerr ]
 commands:
   start:
     description: starts the game.
+  end:
+    description: ends any current active game.
   type:
     description: change the game type.
   changeteam:

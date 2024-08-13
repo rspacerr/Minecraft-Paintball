@@ -23,17 +23,17 @@ public class type implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        if (args.length != 1 && args.length != 2) {
+        if (args.length != 0 && args.length != 1) {
             sender.sendMessage("Usage: /type <type>");
             return false;
         }
 
-        if (args.length == 1) {
+        if (args.length == 0) {
             sender.sendMessage("Current gamemode: " + GameManager.game());
             return true;
         }
 
-        String mode = args[1].toLowerCase();
+        String mode = args[0].toLowerCase();
         switch (mode) {
             case "paintball":
                 GameManager.setGameType(GameType.PAINTBALL);

@@ -27,6 +27,7 @@ public class changeteam implements CommandExecutor {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p.getName().equals(args[1])) {
                     GameManager.changeTeam(name, p);
+                    Bukkit.broadcastMessage(p.getName() + " has joined Team " + name);
                     sender.sendMessage(String.format("%sSuccessfully changed %s's team to %s.", ChatColor.GREEN, p.getName(), name));
                     break;
                 }
@@ -34,6 +35,7 @@ public class changeteam implements CommandExecutor {
         } else {
             Player p = (Player) sender;
             GameManager.changeTeam(name, p);
+            Bukkit.broadcastMessage(p.getName() + " has joined Team " + name);
             sender.sendMessage(String.format("%sSuccessfully changed %s's team to %s.", ChatColor.GREEN, p.getName(), name));
         }
 

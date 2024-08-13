@@ -7,24 +7,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.List;
 
 public abstract class Game implements Listener {
     protected List<GamePlayer> alivePlayers;
-    protected List<GameTeam> aliveTeams;
+    protected int aliveTeams;
 
 
     public abstract void start();
     public abstract void end();
-
-    /**
-     * Handles death effect graphics and logic.
-     * @implSpec calls checkGameEnd();
-     * @param player Player that died.
-     */
-    public abstract void death(GamePlayer player);
-
 
     /* prevent punching */
     @EventHandler
@@ -39,9 +33,26 @@ public abstract class Game implements Listener {
     /**
      * Trigger end game events if there is only one team alive.
      */
-    private void checkGameEnd() {
-        if (aliveTeams.size() == 1) {
-            end();
+    void checkGameEnd() {
+        if (aliveTeams <= 1) {
+            GameManager.end();
         }
+    }
+
+    @EventHandler
+    public void preventMovingOnStart(PlayerMoveEvent e) {
+        GamePlayer player = GameManager.getPlayer(e.getPlayer());
+        if (player == null) return;
+        if (GameManager.starting) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent e) {
+        GamePlayer player = GameManager.getPlayer(e.getPlayer());
+        if (player == null) return;
+
+        e.setCancelled(true);
     }
 }

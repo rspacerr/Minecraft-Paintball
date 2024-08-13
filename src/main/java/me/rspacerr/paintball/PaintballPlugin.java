@@ -1,9 +1,6 @@
 package me.rspacerr.paintball;
 
-import me.rspacerr.paintball.commands.changeteam;
-import me.rspacerr.paintball.commands.setdamage;
-import me.rspacerr.paintball.commands.start;
-import me.rspacerr.paintball.commands.type;
+import me.rspacerr.paintball.commands.*;
 import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.*;
 import org.bukkit.event.Listener;
@@ -34,6 +31,7 @@ public final class PaintballPlugin extends JavaPlugin implements Listener {
         getCommand("type").setTabCompleter(typeCommand);
 
         getCommand("start").setExecutor(new start());
+        getCommand("end").setExecutor(new end());
 
         plugin = this;
 

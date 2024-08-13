@@ -4,18 +4,18 @@ import me.rspacerr.paintball.GameManager;
 import me.rspacerr.paintball.GameUtil;
 import me.rspacerr.paintball.PaintballPlugin;
 import me.rspacerr.paintball.players.GamePlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
@@ -27,17 +27,34 @@ import java.util.UUID;
 public class Paintball extends Game {
     // variables
     public static double damage = 2;
-    public static final long COOLDOWN_TIME = 1000; // 1 second
+    public static final long COOLDOWN_TIME = 500; // 1 second
     Map<UUID, Long> cooldowns = new HashMap<>();
     Map<UUID, Boolean> canShoot = new HashMap<>();
+
+    // items
+    private final ItemStack PAINTBALL_GUN = new ItemStack(Material.DIAMOND_HORSE_ARMOR);
 
     int cooldownTaskID = -1;
 
     @Override
     public void start() {
+        aliveTeams = GameManager.teams().size();
+        GameManager.countdown();
         for (GamePlayer pl : GameManager.players()) {
-            cooldowns.put(pl.player().getUniqueId(), System.currentTimeMillis());
-            canShoot.put(pl.player().getUniqueId(), true);
+            Player player = pl.player();
+            player.getInventory().clear();
+            player.getInventory().addItem(PAINTBALL_GUN);
+            player.setMaxHealth(20);
+            player.setHealth(20);
+            player.getWorld().setGameRule(GameRule.NATURAL_REGENERATION, false); // TODO: standardize world
+            for (GamePlayer other : GameManager.players()) {
+                if (other.player().getUniqueId() == pl.player().getUniqueId()) continue;
+                if (pl.board.getTeam(other.team()) == null) continue;
+                pl.board.getTeam(other.team()).setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+            }
+            player.setGameMode(GameMode.ADVENTURE);
+            cooldowns.put(player.getUniqueId(), System.currentTimeMillis());
+            canShoot.put(player.getUniqueId(), true);
         }
 
         cooldownTaskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PaintballPlugin.plugin(), () -> {
@@ -85,7 +102,11 @@ public class Paintball extends Game {
         // Check if same team
         GamePlayer hitGamePlayer = GameManager.getPlayer(hitPlayer);
         GamePlayer shooterGamePlayer = GameManager.getPlayer(shooter);
-        if (hitGamePlayer.team().equals(shooterGamePlayer.team())) return;
+        if (hitGamePlayer.team().equals(shooterGamePlayer.team())) {
+            e.setCancelled(true);
+            e.getEntity().remove();
+            return;
+        }
 
         Projectile projectile = e.getEntity();
 
@@ -93,10 +114,24 @@ public class Paintball extends Game {
 
         GameUtil.hitSFX(shooter);
         if (hitPlayer.getHealth() - damage <= 0) {
+            e.setCancelled(true);
             hitPlayer.setGameMode(GameMode.SPECTATOR);
             hitPlayer.setHealth(20);
-            // TODO: broadcast death message
+            Bukkit.broadcastMessage(hitPlayer.getName() + " was shot by " + shooter.getName());
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(PaintballPlugin.plugin(), new Runnable() {
+                @Override
+                public void run() {
+                    if (GameManager.isTeamDead(hitGamePlayer)) {
+                        Bukkit.broadcastMessage("Team " + hitGamePlayer.team() + " was eliminated!");
+                    }
+                    aliveTeams--;
+                    checkGameEnd();
+                }
+            }, 60);
+
         } else {
+            e.setCancelled(true);
             hitPlayer.damage(damage);
             hitPlayer.setVelocity(new Vector(paintballVelocity.getX()*0.1, 0.15, paintballVelocity.getZ()*0.1));
         }
@@ -104,13 +139,20 @@ public class Paintball extends Game {
     }
 
     @Override
-    public void death(GamePlayer player) {
-
-    }
-
-    @Override
     public void end() {
+        HandlerList.unregisterAll(this);
         Bukkit.getScheduler().cancelTask(cooldownTaskID);
+
+        for (GamePlayer pl : GameManager.players()) {
+            Player player = pl.player();
+            player.setHealth(20);
+            player.getWorld().setGameRule(GameRule.NATURAL_REGENERATION, true);
+            for (GamePlayer other : GameManager.players()) {
+                if (other.player().getUniqueId() == pl.player().getUniqueId()) continue;
+                if (pl.board.getTeam(other.team()) == null) continue;
+                pl.board.getTeam(other.team()).setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
+            }
+        }
     }
 
     /* as default behavior, remove players that disconnect. TODO: check for team death */

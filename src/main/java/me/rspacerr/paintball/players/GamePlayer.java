@@ -13,7 +13,7 @@ public class GamePlayer {
     private Player player;
     private int kills = 0;
 
-    private final Scoreboard board = PaintballPlugin.manager.getNewScoreboard();
+    public final Scoreboard board = PaintballPlugin.manager.getNewScoreboard();
     private GameTeam team = null;
     private Team scoreboardTeam = null;
 
@@ -31,9 +31,8 @@ public class GamePlayer {
         if (board.getTeam(s) == null) {
             scoreboardTeam = board.registerNewTeam(s);
             scoreboardTeam.setAllowFriendlyFire(false);
-            scoreboardTeam.setPrefix("[" + s + "]");
+            scoreboardTeam.setPrefix("[" + s + "] ");
 
-            // TODO: this should not make a new team, but sh
             if (GameManager.getTeam(s) == null) {
                 GameManager.addTeam(s);
             }
@@ -48,7 +47,7 @@ public class GamePlayer {
             // add everyone to this player's scoreboard
             if (board.getTeam(player.team()) == null) {
                 Team scoreboardTeam = board.registerNewTeam(player.team());
-                scoreboardTeam.setPrefix("[" + player.team() + "]");
+                scoreboardTeam.setPrefix("[" + player.team() + "] ");
                 scoreboardTeam.setAllowFriendlyFire(false);
                 scoreboardTeam.addPlayer(player.player);
             } else {
@@ -59,7 +58,7 @@ public class GamePlayer {
             if (player.board.getTeam(s) == null) {
                 Team scoreboardTeam = player.board.registerNewTeam(s);
                 scoreboardTeam.setAllowFriendlyFire(false);
-                scoreboardTeam.setPrefix("[" + s + "]");
+                scoreboardTeam.setPrefix("[" + s + "] ");
                 scoreboardTeam.addPlayer(this.player);
             } else {
                 player.board.getTeam(s).addPlayer(this.player);

@@ -3,8 +3,12 @@ package me.rspacerr.paintball;
 import me.rspacerr.paintball.games.*;
 import me.rspacerr.paintball.players.GamePlayer;
 import me.rspacerr.paintball.players.GamePlayerFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -14,6 +18,9 @@ public final class GameManager {
     private static Map<String, GameTeam> teams = new HashMap<>();
     private static GameType type = GameType.PAINTBALL;
     private static Game game = null;
+    private static int time = -1;
+    private static int taskID = -1;
+    public static boolean starting = false;
 
     // settings
     public static boolean ALLOW_PUNCHING = false;
@@ -38,6 +45,7 @@ public final class GameManager {
         };
 
         PaintballPlugin.plugin().getServer().getPluginManager().registerEvents(game, PaintballPlugin.plugin());
+        Bukkit.broadcastMessage("Starting " + ChatColor.GOLD + type);
         game.start();
         return true;
     }
@@ -136,7 +144,53 @@ public final class GameManager {
 
     /* end game on shutdown or other critical failure */
     public static void end() {
+        if (taskID != -1) {
+            Bukkit.getScheduler().cancelTask(taskID);
+        }
+
         game.end();
+        winMessages();
+        game = null;
+    }
+
+    /* start countdown */
+    public static void countdown() {
+        // handle timer to countdown
+        time = 11;
+        starting = true;
+        for (GamePlayer player : players()) {
+            player.player().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 1, false, false));
+        }
+
+        taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(PaintballPlugin.plugin(), () -> {
+            time--;
+
+            if (time < 0) {
+                starting = false;
+                Bukkit.getScheduler().cancelTask(taskID);
+            }
+
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (time <= 10 && time > 3) {
+                    p.sendTitle(ChatColor.AQUA + "Starting in:", ChatColor.BOLD + ">" + time + "<", 0, 20, 0);
+                } else if (time == 3) {
+                    p.sendTitle(ChatColor.AQUA + "Starting in:", ChatColor.BOLD + ">" + ChatColor.RED + ChatColor.BOLD + time + ChatColor.WHITE + ChatColor.BOLD + "<", 0, 20, 0);
+                } else if (time == 2) {
+                    p.sendTitle(ChatColor.AQUA + "Starting in:", ChatColor.BOLD + ">" + ChatColor.YELLOW + ChatColor.BOLD + time + ChatColor.WHITE + ChatColor.BOLD + "<", 0, 20, 0);
+                } else if (time == 1) {
+                    p.sendTitle(ChatColor.AQUA + "Starting in:", ChatColor.BOLD + ">" + ChatColor.GREEN + ChatColor.BOLD + time + ChatColor.WHITE + ChatColor.BOLD + "<", 0, 20, 0);
+                }
+            }
+        }, 20, 20);
+    }
+
+    private static void winMessages() {
+        // TODO: store which team(s) win
+        for (GamePlayer player : players.values()) {
+            if (!(isTeamDead(player))) {
+                player.player().sendMessage(ChatColor.GREEN + "Your team has won the round!");
+            }
+        }
     }
 
     public static void setGameType(GameType type) {
