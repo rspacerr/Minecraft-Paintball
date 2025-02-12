@@ -1,7 +1,6 @@
 package me.rspacerr.paintball.games;
 
 import me.rspacerr.paintball.GameManager;
-import me.rspacerr.paintball.GameTeam;
 import me.rspacerr.paintball.players.GamePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

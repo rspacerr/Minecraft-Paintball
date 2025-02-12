@@ -8,6 +8,7 @@ commands:
     description: starts the game.
   end:
     description: ends any current active game.
+    aliases: [ gametype ]
   type:
     description: change the game type.
   changeteam:

@@ -185,10 +185,11 @@ public final class GameManager {
     }
 
     private static void winMessages() {
-        // TODO: store which team(s) win
         for (GamePlayer player : players.values()) {
             if (!(isTeamDead(player))) {
-                player.player().sendMessage(ChatColor.GREEN + "Your team has won the round!");
+                player.player().sendMessage(ChatColor.GREEN + "Your team has won!");
+            } else {
+                player.player().sendMessage(ChatColor.RED + "Your team lost!");
             }
         }
     }
